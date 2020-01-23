@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  vars:
+    ovirt_cluster: Default
+    ovirt_host_pw: "{{ lookup('env','OVIRT_PASSWORD') }}"
+    ovirt_interface: eth1
+    offset: 1
+    items: "{{ range(offset, offset+300, 10)|list }}"
+
+  tasks:
+  - ovirt_auth:
+     state: present
+     insecure: true
+
+  - ovirt_cluster:
+      name: "{{ ovirt_cluster }}"
+      cpu_type: Intel SandyBridge IBRS SSBD MDS Family
+
+  - ovirt_host:
+      auth: "{{ ovirt_auth }}"
+      cluster: Default
+      name: "{{ ovirt_host }}"
+      address: "{{ ovirt_address }}"
+      password: "{{ ovirt_host_pw }}"
+  - ovirt_host_network:
+      name: "{{ ovirt_host }}"
+      auth: "{{ ovirt_auth }}"
+      interface: "{{ ovirt_interface }}"
+      networks:
+        - name: "network-{{ item + 0}}"
+        - name: "network-{{ item + 1 }}"
+        - name: "network-{{ item + 2 }}"
+        - name: "network-{{ item + 3 }}"
+        - name: "network-{{ item + 4 }}"
+        - name: "network-{{ item + 5 }}"
+        - name: "network-{{ item + 6 }}"
+        - name: "network-{{ item + 7 }}"
+        - name: "network-{{ item + 8 }}"
+        - name: "network-{{ item + 9 }}"
+    loop: "{{ items }}"

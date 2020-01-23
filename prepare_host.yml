@@ -1,0 +1,17 @@
+---
+- hosts: all
+  vars:
+    ovirt_host_pw: "{{ lookup('env','OVIRT_PASSWORD') }}"
+    ansible_user: root
+    host_key_checking: false
+# ansible-playbook -i ip, prepare_host.yml &
+  tasks:
+  - lineinfile: dest=/etc/ssh/sshd_config
+                regexp='^#?PasswordAuthentication'
+                line='PasswordAuthentication yes'
+  - service: name=sshd state=restarted
+  - user:
+      name: root
+      password: "{{ ovirt_host_pw | password_hash('sha512') }}"
+  - yum:
+      name: https://resources.ovirt.org/pub/yum-repo/ovirt-release43.rpm

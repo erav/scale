@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  vars:
+    ovirt_data_center: Default
+    ovirt_cluster: Default
+    offset: 1
+    items: "{{ range(offset, offset+300)|list }}"
+
+  tasks:
+  - ovirt_auth:
+     state: present
+     insecure: true
+  - ovirt_network:
+      auth: "{{ ovirt_auth }}"
+      data_center: "{{ ovirt_data_center }}"
+      name: "network-{{ item }}"
+      vlan_tag: "{{ item }}"
+      vm_network: True
+      clusters:
+        - name: "{{ ovirt_cluster }}"
+          required: no
+    loop: "{{ items }}"
+
