@@ -4,7 +4,6 @@
     ovirt_host_pw: "{{ lookup('env','OVIRT_PASSWORD') }}"
     ansible_user: root
     host_key_checking: false
-# ansible-playbook -i ip, prepare_host.yml &
   tasks:
   - lineinfile: dest=/etc/ssh/sshd_config
                 regexp='^#?PasswordAuthentication'

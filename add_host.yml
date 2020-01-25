@@ -22,6 +22,7 @@
       name: "{{ ovirt_host }}"
       address: "{{ ovirt_address }}"
       password: "{{ ovirt_host_pw }}"
+
   - ovirt_host_network:
       name: "{{ ovirt_host }}"
       auth: "{{ ovirt_auth }}"
