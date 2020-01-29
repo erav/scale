@@ -1,3 +1,5 @@
+import os
+import sys
 import time
 
 import digitalocean
@@ -8,7 +10,22 @@ all_ssh_keys = manager.get_all_sshkeys()
 host_tag = 'ovirt-host'
 
 # digitalocean.Droplet.create_multiple seems to work only up to 10 dropletes
-for i in range(0, 49):
+stream = os.popen('source auth.sh')
+output = stream.read()
+print(output)
+
+try:
+    os.environ['OVIRT_FQDN']
+    os.environ['OVIRT_URL']
+    os.environ['OVIRT_USERNAME']
+    os.environ['OVIRT_PASSWORD']
+    os.environ['DIGITALOCEAN_ACCESS_TOKEN']
+    os.environ['ANSIBLE_HOST_KEY_CHECKING']
+except KeyError:
+    print ("Please set environment variables")
+    sys.exit(1)
+
+for i in range(0, 9):
     droplet_name= 'ovirt-43-host-{:02d}'.format(i)
     print('creating ' + droplet_name)
     droplet = digitalocean.Droplet(name=droplet_name,
@@ -29,17 +46,11 @@ for droplet in droplets:
     while not droplet.ip_address:
         time.sleep(1)
         droplet.load()
+    print(droplet.name, ' ', droplet.ip_address, ' ', type(droplet.ip_address))
 
     for action in droplet.get_actions():
         while action.status != 'completed':
             time.sleep(1)
             action.load()
 
-for droplet in droplets:
-    print('ansible-playbook -i {}, prepare_host.yml &'.format(droplet.ip_address))
-
-for droplet in droplets:
-    print(
-        'ansible-playbook -e ovirt_host={} -e ovirt_address={} add_host.yml &'.format(
-            droplet.name, droplet.ip_address)
-    )
+print('creating hosts done')

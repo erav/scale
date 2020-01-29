@@ -3,6 +3,10 @@
   vars:
     ovirt_data_center: Default
     ovirt_cluster: Default
+    ovirt_host_pw: "{{ lookup('env','OVIRT_PASSWORD') }}"
+    ovirt_host_name: "{{ lookup('env','OVIRT_FQDN') }}"
+    ovirt_user_name: "{{ lookup('env','OVIRT_USERNAME') }}"
+    ovirt_password: "{{ lookup('env','OVIRT_PASSWORD') }}"
     offset: 1
     items: "{{ range(offset, offset+300)|list }}"
 
@@ -10,6 +14,9 @@
   - ovirt_auth:
      state: present
      insecure: true
+     hostname: "{{ ovirt_host_name }}"
+     username: "{{ ovirt_user_name }}"
+     password: "{{ ovirt_password }}"
   - ovirt_network:
       auth: "{{ ovirt_auth }}"
       data_center: "{{ ovirt_data_center }}"

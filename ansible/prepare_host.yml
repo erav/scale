@@ -1,10 +1,17 @@
 ---
 - hosts: all
+#  debugger: always
+#  gather_facts: yes
   vars:
     ovirt_host_pw: "{{ lookup('env','OVIRT_PASSWORD') }}"
     ansible_user: root
     host_key_checking: false
   tasks:
+  - debug:
+      msg:
+      - "Executing based on OVIRT_PASSWORD: {{ lookup('env', 'OVIRT_PASSWORD') }}"
+      - "Executing based on ovirt_host_pw: {{ ovirt_host_pw }}"
+
   - lineinfile: dest=/etc/ssh/sshd_config
                 regexp='^#?PasswordAuthentication'
                 line='PasswordAuthentication yes'

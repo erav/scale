@@ -1,8 +1,11 @@
 ---
-- hosts: localhost
+- hosts: localhost 
   vars:
     ovirt_cluster: Default
     ovirt_host_pw: "{{ lookup('env','OVIRT_PASSWORD') }}"
+    ovirt_host_name: "{{ lookup('env','OVIRT_FQDN') }}"
+    ovirt_user_name: "{{ lookup('env','OVIRT_USERNAME') }}"
+    ovirt_password: "{{ lookup('env','OVIRT_PASSWORD') }}"
     ovirt_interface: eth1
     offset: 1
     items: "{{ range(offset, offset+300, 10)|list }}"
@@ -11,8 +14,12 @@
   - ovirt_auth:
      state: present
      insecure: true
+     hostname: "{{ ovirt_host_name }}"
+     username: "{{ ovirt_user_name }}"
+     password: "{{ ovirt_password }}"
 
   - ovirt_cluster:
+      auth: "{{ ovirt_auth }}"
       name: "{{ ovirt_cluster }}"
       cpu_type: Intel SandyBridge IBRS SSBD MDS Family
 
@@ -21,7 +28,7 @@
       cluster: Default
       name: "{{ ovirt_host }}"
       address: "{{ ovirt_address }}"
-      password: "{{ ovirt_host_pw }}"
+      password: "qum5net"
 
   - ovirt_host_network:
       name: "{{ ovirt_host }}"
